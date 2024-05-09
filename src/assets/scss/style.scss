@@ -1,0 +1,103 @@
+@import "./parts/vendors/bourbon/bourbon", "./parts/variables.scss",
+  "./parts/vendors.scss", "./parts/mixins.scss", "./parts/components.scss";
+
+// Root scss
+:root {
+  --ggs: 1;
+  --max-sidebar-width: 240px;
+  --min-sidebar-width: 58px;
+}
+
+body,
+html {
+  height: 100%;
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+.center-wrap {
+  width: 420px;
+  height: auto;
+  padding: 42px 32px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background: #fff;
+
+  position: relative;
+  z-index: 10;
+
+  .logo {
+    width: 82px;
+    height: 82px;
+
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 16px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 12px;
+
+    position: relative;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      z-index: 1;
+
+      cursor: pointer;
+    }
+
+    &:hover {
+      cursor: pointer;
+
+      &::after {
+        content: "Upload";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 12px;
+      }
+    }
+  }
+
+  form {
+    width: 100%;
+
+    nz-form-label,
+    label {
+      display: flex;
+      flex-shrink: 0;
+      width: calc(420px - 64px);
+    }
+
+    input {
+      width: calc(420px - 64px);
+    }
+  }
+}

@@ -1,0 +1,81 @@
+@mixin button-filled($color, $background) {
+  color: $color;
+  background-color: $background;
+  transition: all 0.2s linear;
+  &:hover {
+    color: $color;
+    background-color: darken($background, 4%);
+    box-shadow: 0px 1px 8px lighten($background, 5%);
+    @include opacity(1);
+  }
+
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] {
+    background-color: $brand-color;
+    color: white;
+    opacity: 0.7;
+    border: #eee;
+    box-shadow: 0px 1px 8px #bbb;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-outlined($outline) {
+  color: $outline;
+  background-color: transparent;
+  border: 1px solid $outline;
+  transition: all 0.2s linear;
+  &:hover {
+    color: $bright;
+    background-color: $outline;
+    box-shadow: 0px 1px 8px lighten($outline, 5%);
+    @include opacity(1);
+  }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] {
+    background-color: #eee;
+    border: #eee;
+    box-shadow: 0px 1px 8px #bbb;
+    color: #8c8c8c;
+    cursor: not-allowed;
+  }
+}
+
+//---------------------------------------------- ghost buttons
+@mixin ghost-button-variant($color) {
+  color: $color;
+  background-color: transparent;
+  border: 1px solid transparent;
+  @include border-radius(3px);
+  transition: all 0.2s linear;
+
+  &:hover {
+    color: $color;
+    background-color: transparent;
+    border: 1px solid $color;
+  }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] {
+    background-color: #eee;
+    border: #eee;
+    box-shadow: 0px 1px 8px #bbb;
+    color: #8c8c8c;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-size(
+  $padding-vertical,
+  $padding-horizontal,
+  $font-size,
+  $line-height,
+  $border-radius
+) {
+  padding: $padding-vertical $padding-horizontal;
+  font-size: $font-size;
+  line-height: $line-height;
+  border-radius: $border-radius;
+}

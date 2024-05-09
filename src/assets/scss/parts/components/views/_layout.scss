@@ -1,0 +1,121 @@
+.admin-container {
+  position: relative;
+
+  .mobile-sidebar {
+    display: none;
+
+    @media only screen and (max-device-width: 767px) and (orientation: portrait) {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100010;
+      height: 100vh;
+      transform: translateX(-100%);
+      transition: all 0.4s ease-in-out;
+
+      &.active {
+        transform: translateX(0);
+      }
+
+      .nz-sidebar {
+        height: 100vh;
+        border: none !important;
+      }
+    }
+  }
+
+  .desktop-sidebar {
+    @media only screen and (max-device-width: 767px) and (orientation: portrait) {
+      display: none;
+    }
+  }
+
+  nz-content {
+    @media only screen and (max-device-width: 767px) and (orientation: portrait) {
+      padding: 12px 4%;
+    }
+  }
+}
+
+.mobile-overlay {
+  display: none;
+
+  @media only screen and (max-device-width: 767px) and (orientation: portrait) {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    width: 100vw;
+    height: 100vh;
+    background-color: #1212122c;
+
+    &.active {
+      display: block;
+    }
+  }
+}
+
+.site-page-header {
+  @media only screen and (max-device-width: 767px) and (orientation: portrait) {
+    .ant-page-header-heading-extra {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+
+      nz-select,
+      nz-range-picker,
+      button {
+        flex-shrink: 0;
+        width: 100% !important;
+        margin: 0 0 12px 0 !important;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        nz-select,
+        nz-range-picker,
+        button,
+        input {
+          flex-shrink: 0;
+          width: 100% !important;
+          margin: 0 0 12px 0 !important;
+        }
+      }
+    }
+  }
+}
+
+.ant-page-header-heading {
+  margin-bottom: 10px;
+}
+
+.cdk-overlay-container {
+  & > div {
+    @media only screen and (max-device-width: 767px) and (orientation: portrait) {
+      overflow-x: scroll !important;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Hide scrollbar for IE, Edge and Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+  }
+}
+
+.ant-drawer-content-wrapper {
+  @media only screen and (max-device-width: 767px) and (orientation: portrait) {
+    width: 100vw !important;
+
+    .ant-drawer-header {
+      padding: 12px 4% !important;
+    }
+  }
+}

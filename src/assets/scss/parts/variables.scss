@@ -1,0 +1,152 @@
+$brand-color: #f3711c;
+$section-bg: #ffffff;
+
+$dark: #49474e;
+$bright: #ffffff;
+
+$color-text: #121212;
+
+//  Typography
+//  =================================
+//  Base sizes:
+//  Set this in pixels (but do not add px),
+//  the font-size mixin will convert to REMS
+//
+
+$font-size-base: 16;
+$font-size-base-px: $font-size-base * 1px;
+
+$leading-base: 1.4;
+$line-height-base: round(8 * $leading-base);
+$baseline: $line-height-base * 1px;
+
+$type-scale: 1.25; // Major third
+
+$type: (
+  micro: $font-size-base-px - 4px,
+  // lable, smalll
+  small: $font-size-base-px - 2px,
+  // h5, h6
+  base: 18px,
+  // p, h4
+  mid: 28px,
+  // h3
+  large: 32px,
+  // h2
+  jumbo: 36px // h1,,,,,
+);
+
+$extra-large-font-size: 64px;
+
+// Useful to set here when bold webfonts come as 400 font-weight.
+$font-weight-bold: bold;
+
+// Font stacks
+$font-family-sans: "Roboto", Helvetica, Arial, sans-serif;
+$font-family-serif: "Roboto", sans-serif;
+$font-family-mono: Menlo, Monaco, "Courier New", monospace;
+
+$font-family-base: $font-family-sans;
+$font-family-alt: $font-family-serif;
+
+$font-family-headings: "Quicksand", Helvetica, Arial, sans-serif; // using inherit will use $font-family-base for all headings
+$font-weight-headings: bold; // instead of browser default, bold
+$line-height-headings: 1.4;
+
+//   * Breakpoints
+//   * =================================
+//   * There are no common breakpoints so these are just a suggestions
+//   * You'll need to define your own breakpoints to suit your design
+//   * Add your breakpoints to this Sass map
+//   * Used in the Kickoff grid
+//   */
+$breakpoints: (
+  narrow: 400px,
+  mid: 750px,
+  wide: 1000px,
+  huge: 1250px,
+);
+
+// Setup layout max-width
+$layout-margin: 0; // [in pixels] Space outside the grid
+$layout-max-width: 1000; // [in pixels]
+$layout-min-width: 960; // [in pixels] Minimum width for layout in <IE9
+$layout-max-width--huge: 1100; // [in pixels]
+$layout-min-width--huge: 1100; // [in pixels] Minimum width for layout in <IE9
+
+//
+// Grid
+// =================================
+// These variables will control the grid module.
+// if your project doesnt use Kickoff’s default grid, you can delete these
+//
+
+$grid-column-count: 12; // Total column count
+$grid-gutter-width: 20; // [in pixels]
+
+//Settings here override & affect the grid classes output
+$responsive-grid-sizes: true; // Disable this if you don't want grid sizes for each breakpoint
+$use-legacy-grid: true; // Disable this is you on’t want to output .no-flexbox classes for older browsers to use
+
+//
+// Spcing Variables
+// =================================
+//
+$space: 1rem;
+
+// ------------------------------------------------------------------- Custom Radio button
+
+$radioSize: 24px;
+$radioBorder: #d4d4d4;
+$radioActive: $brand-color;
+
+//------------------------------success color list starts
+
+//success color
+$success-color: #53a653;
+
+//dark shades success color
+$success-darkest: #24682a;
+$success-darker: #369c40;
+$success-dark: #41bb4d;
+
+//light shades success color
+$success-light: #5bd567;
+$success-lighter: #76dc80;
+$success-lightest: #a4e8aa;
+
+//------------------------------success color list end
+
+//------------------------------danger color list start
+
+//danger color
+$danger-color: #ff4d4f;
+
+//dark shades danger color
+$danger-darkest: darken($danger-color, 25%);
+$danger-darker: darken($danger-color, 15%);
+$danger-dark: darken($danger-color, 5%);
+
+//light shades danger color
+$danger-light: lighten($danger-color, 5%);
+$danger-lighter: lighten($danger-color, 15%);
+$danger-lightest: lighten($danger-color, 25%);
+
+//------------------------------warning color list start
+
+//warning color
+$warning-color: #fabd02;
+
+//dark shades warning color
+$warning-darkest: darken($warning-color, 25%);
+$warning-darker: darken($warning-color, 15%);
+$warning-dark: darken($warning-color, 5%);
+
+//light shades warning color
+$warning-light: lighten($warning-color, 5%);
+$warning-lighter: lighten($warning-color, 15%);
+$warning-lightest: lighten($warning-color, 25%);
+
+//------------------------------warning color list end
+
+//------------------------------gray color list start

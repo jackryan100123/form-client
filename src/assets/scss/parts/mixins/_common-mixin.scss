@@ -1,0 +1,219 @@
+// Box Model
+// font weight
+// display
+// overlay
+// text align
+// Box Shadow
+// Center Block Element
+// Object Fit
+// Backface
+// Size (width, height)
+// calc
+// opacity
+// Visibility
+// Text overflow (ellipsis...)
+// User Select
+// Placeholder
+// Image Grayscale
+
+// ---------------------------------------------------------- Box Sizing
+@mixin box-sizing($boxmodel: border-box) {
+  -webkit-box-sizing: $boxmodel;
+  -moz-box-sizing: $boxmodel;
+  box-sizing: $boxmodel;
+}
+
+// ---------------------------------------------------------- font weight
+@mixin font-weight($weight: 400) {
+  font-weight: $weight;
+}
+
+//---------------------------------------------- flex
+@mixin display($type, $direction) {
+}
+
+// ---------------------------------------------------------- text align
+@mixin text-align($position) {
+  text-align: $position;
+}
+
+// ---------------------------------------------------------- Box Shadow
+@mixin box-shadow($top, $left, $blur, $color, $inset: false) {
+  @if $inset {
+    -webkit-box-shadow: inset $top $left $blur $color;
+    -moz-box-shadow: inset $top $left $blur $color;
+    box-shadow: inset $top $left $blur $color;
+  } @else {
+    -webkit-box-shadow: $top $left $blur $color;
+    -moz-box-shadow: $top $left $blur $color;
+    box-shadow: $top $left $blur $color;
+  }
+}
+
+// ---------------------------------------------------------- Center Block Element
+@mixin center-block() {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@mixin absolute-center($width, $height) {
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  max-width: $width;
+  max-height: $height;
+}
+
+// ---------------------------------------------------------- Object Fit
+@mixin object-fit($fit: cover) {
+  -webkit-object-fit: $fit;
+  -moz-object-fit: $fit;
+  -o-object-fit: $fit;
+  object-fit: $fit;
+}
+
+// ---------------------------------------------------------- Backface
+@mixin backface-visibility($visibility: hidden) {
+  -webkit-backface-visibility: $visibility;
+  -moz-backface-visibility: $visibility;
+  backface-visibility: $visibility;
+}
+
+//----------------------------------------------- size
+
+@mixin size($width, $height) {
+  width: $width;
+  height: $height;
+}
+
+@mixin square($size) {
+  @include size($size, $size);
+}
+
+@mixin circle($size) {
+  @include square($size);
+  @include border-radius(50%);
+}
+
+@mixin min-width($width: 10px) {
+  min-width: $width;
+  width: auto;
+}
+
+@mixin min-height($height: 10px) {
+  min-height: $height;
+  height: auto;
+}
+
+@mixin max-width($width) {
+  max-width: $width;
+  @include center-block();
+}
+
+@mixin max-height($height) {
+  max-height: $height;
+  overflow-y: auto;
+}
+
+//----------------------------------------------- opacity
+@mixin opacity($opacity) {
+  opacity: $opacity;
+}
+
+// ---------------------------------------------------------- Visibility
+
+@mixin visibility-hide() {
+  display: none;
+  @include opacity(0);
+  visibility: hidden;
+}
+
+@mixin visibility-show() {
+  display: inline-block;
+  @include opacity(1);
+  visibility: visible;
+}
+
+// ---------------------------------------------------------- Text Overflow (Ellipsis)
+@mixin text-overflow() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// -------------------------------------------------------- User Select
+
+// User select
+// For selecting text on the page
+
+@mixin user-select($select: none) {
+  -webkit-user-select: $select;
+  -moz-user-select: $select;
+  -ms-user-select: $select; // IE10+
+  user-select: $select;
+}
+
+// ------------------------------------------------------- Placeholder text
+
+@mixin placeholder($color: $dark-color) {
+  // Firefox
+  &::-moz-placeholder {
+    color: $color;
+    opacity: 1;
+  }
+  &:-ms-input-placeholder {
+    color: $color;
+  }
+  &::-webkit-input-placeholder {
+    color: $color;
+  }
+}
+
+// --------------------------------------------------------- Image Grayscale
+@mixin grayscale($value: 1) {
+  -webkit-filter: grayscale($value);
+  -moz-filter: grayscale($value);
+  -o-filter: grayscale($value);
+  -ms-filter: grayscale($value);
+  filter: grayscale($value);
+}
+
+@mixin img-responsive($display: block) {
+  display: $display;
+  max-width: 100%;
+  height: auto;
+}
+
+// --------------------------------------------------------- Reset Gradient Filter
+// When you need to remove a gradient background, do not forget to use this to reset
+// the IE filter for IE9 and below.
+
+//   @mixin reset-filter() {
+//     filter: e(%("progid:DXImageTransform.Microsoft.gradient(enabled = false)"));
+//   }
+
+@mixin icon-shadow($color, $amount: 15%) {
+  box-shadow: 0 4px 8px color_lighten($color, $amount);
+}
+
+@mixin shadow($size: 0 4px 8px, $color: rgba(0, 0, 0, 0.03)) {
+  box-shadow: $size $color;
+}
+
+@mixin dropdown-indicator($content: "\f054") {
+  content: $content;
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  font-size: 14px !important;
+  -webkit-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  font-size: 12px;
+  transition: all 0.5s;
+}

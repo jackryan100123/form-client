@@ -1,0 +1,33 @@
+/**
+ * Type size helpers
+ * =================================
+ * Type size helper classes
+ *
+ * Usage examples:
+ * @include ko-type-sizes(); // outputs just the type-size helpers based on the $type map
+ * @include ko-type-sizes($type, (h1: xxl, h2: xl)); // would also output the .h1, .h2 classes
+ * @include ko-type-sizes($type, (alpha: xxl, beta: xl)); // would also output the .alpha, .beta classes
+ */
+
+@mixin zy-type-sizes($map: $type, $custom: "") {
+  @each $key, $value in $map {
+    .u-type-#{$key} {
+      font-size: ko-font-size($key);
+    }
+  }
+
+  @if $custom != "" {
+    @each $k, $val in $custom {
+      // @if unit($val) == px or unit($val) == em or unit($val) == rem { // FIXME: why does this not work?
+      @if type-of($val) == number {
+        .#{$k} {
+          font-size: $val;
+        }
+      } @else {
+        .#{$k} {
+          font-size: ko-font-size($val);
+        }
+      }
+    }
+  }
+}

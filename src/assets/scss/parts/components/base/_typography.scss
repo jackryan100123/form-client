@@ -1,0 +1,28 @@
+@use "sass:map";
+
+//
+// Typography
+// =================================
+// - Base
+// - Paragraphs
+// - Headings
+// - Type sizes
+// - Misc
+// - Utilities
+//
+
+html {
+  font-size: map.get($type, base);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: $font-family-base;
+  line-height: $leading-base;
+  color: $color-text;
+
+  // Add ligatures
+  // font-feature-settings: "liga", "dlig", "hist";
+  // font-variant-ligatures: common-ligatures discretionary-ligatures
+  //   historical-ligatures;
+}

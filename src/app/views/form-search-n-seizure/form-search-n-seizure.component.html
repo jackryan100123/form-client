@@ -1,0 +1,267 @@
+<div class="container">
+  <h1 class="section-title">PROPERTY SEARCH & SEIZURE MEMO</h1>
+  <h4 class="subhead"> (Search/Production/Recovery u/s 51/102/165
+    Cr.P.C……….. etc.)</h4>
+
+  <form [formGroup]="form">
+    <div formGroupName="meta">
+      <div class="form-group">
+        <label for="district">District:</label>
+        <input nz-input type="text" id="district" formControlName="district" readonly>
+      </div>
+      <div class="form-group">
+        <label for="ps">PS:</label>
+        <input nz-input type="text" id="ps" formControlName="ps" readonly>
+      </div>
+      <div class="form-group">
+        <label for="year">Year:</label>
+        <input nz-input type="text" id="year" formControlName="year" readonly>
+      </div>
+      <div class="form-group">
+        <label for="fir">FIR/GD No.:</label>
+        <input nz-input type="text" id="fir" formControlName="fir_gd" readonly>
+      </div>
+      <div class="form-group">
+        <label for="date">Date:</label>
+        <input nz-input type="text" id="fir" formControlName="date" readonly>
+      </div>
+    </div>
+
+    <div class="scroll">
+      <table id="propertyTable">
+        <thead>
+          <tr>
+            <th>Acts</th>
+            <th>Sections</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of $table; let table_offset = index;">
+            <td>
+              <input nz-input type="text" id="acts"
+                [ngModelOptions]="{standalone: true}" [(ngModel)]="item.acts">
+            </td>
+            <td>
+              <input nz-input type="text" id="section"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="item.section">
+            </td>
+            <td>
+              <button nz-button type="button" nzType="primary"
+                [disabled]="$table.length === 1"
+                (click)="removeTable(table_offset)">
+                <i nz-icon nzType="minus-circle"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button
+        nz-button type="button"
+        nzType="primary"
+        (click)="addTable()">Add Property</button>
+    </div>
+
+    <div
+      formGroupName="property_siezed">
+      <div class="form-group">
+        <label for="property">Property Seized / Recovered:</label>
+        <input nz-input type="text" id="property"
+          formControlName="property_seized">
+      </div>
+      <div class="form-group">
+        <label for="seizureDate">Date:</label>
+        <nz-date-picker formControlName="property_seized_date"></nz-date-picker>
+      </div>
+      <div class="form-group">
+        <label for="time">Time:</label>
+        <input nz-input type="time" id="time"
+          formControlName="property_seized_time">
+      </div>
+      <div class="form-group">
+        <label for="place">Place:</label>
+        <input nz-input type="text" id="place"
+          formControlName="property_seized_place">
+      </div>
+      <div class="form-group">
+        <label for="description">Description of the place:</label>
+        <textarea nz-input id="description" formControlName="desc_of_place"
+          rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="scroll" formGroupName="person_from_whom_recovered">
+      <h6 nz-typography>Person from whom recovered</h6>
+      <div class="form-group">
+        <label for="personName">Name:</label>
+        <input nz-input type="text" id="personName" formControlName="name">
+      </div>
+      <div class="form-group">
+        <label for="fatherName">Father's/Husband's Name:</label>
+        <input nz-input type="text" id="fatherName"
+          formControlName="father_name">
+      </div>
+      <div class="form-group">
+        <label for="age">Age:</label>
+        <input nz-input type="text" id="age" formControlName="age">
+      </div>
+      <div class="form-group">
+        <label for="sex">Sex:</label>
+        <input nz-input type="text" id="sex" formControlName="sex">
+      </div>
+      <div class="form-group">
+        <label for="occupation">Occupation:</label>
+        <input nz-input type="text" id="occupation"
+          formControlName="occupation">
+      </div>
+    </div>
+
+    <div class="scroll">
+      <h6 nz-typography>Nature of property Seized:</h6>
+      <table id="naturePropertyTable">
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th>Nature of property seized</th>
+            <th>Property Category</th>
+            <th>Property Type</th>
+            <th>Description</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let item of $nature_of_property; let naturePropertyTable_offset = index;">
+            <td>{{naturePropertyTable_offset + 1}}</td>
+            <td>
+              <input nz-input type="text" id="natureProperty"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="item.nature">
+            </td>
+
+            <td>
+              <input nz-input type="text" id="propertyCategory"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="item.category">
+            </td>
+
+            <td>
+              <input nz-input type="text" id="propertyType"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="item.type">
+            </td>
+
+            <td>
+              <input nz-input type="text" id="description"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="item.description">
+            </td>
+
+            <td>
+              <button nz-button type="button" nzType="primary"
+                [disabled]="$nature_of_property.length === 1"
+                (click)="removeNatureOfProperty(naturePropertyTable_offset)">
+                <i nz-icon nzType="minus-circle"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button nz-button type="button" nzType="primary"
+        (click)="addDetailsOfProperty()">Add Property</button>
+    </div>
+
+    <div class="scroll">
+      <h6 nz-typography>Professional receiver of stolen property:</h6>
+      <nz-select formControlName="professional_reciver_of_property">
+        <nz-option nzValue="yes" nzLabel="Yes"></nz-option>
+        <nz-option nzValue="no" nzLabel="No"></nz-option>
+      </nz-select>
+    </div>
+
+    <div class="scroll">
+      <h6 nz-typography>Details of Properties Recovered</h6>
+      <table id="recoveredPropertiesTable">
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th>Property Category</th>
+            <th>Property Belongs to</th>
+            <th>Value (In Rs/-)</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let item of $details_of_property; let recoveredPropertiesTable_offset = index;">
+            <td>{{recoveredPropertiesTable_offset + 1}}</td>
+            <td>
+              <input nz-input type="text" id="propertyCategory"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="item.category">
+            </td>
+
+            <td>
+              <input nz-input type="text" id="propertyBelongs"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="item.belongs_to">
+            </td>
+
+            <td>
+              <input nz-input type="text" id="value"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="item.value">
+            </td>
+
+            <td>
+              <button nz-button type="button" nzType="primary"
+                [disabled]="$details_of_property.length === 1"
+                (click)="removeDetailsOfProperty(recoveredPropertiesTable_offset)">
+                <i nz-icon nzType="minus-circle"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button nz-button nzType="primary" (click)="addDetailsOfProperty()">Add
+        Property</button>
+    </div>
+
+    <div class="scroll" formGroupName="witness">
+      <h6 nz-typography>Witnesses:</h6>
+      <div class="form-group">
+        <label for="witnessName">Name:</label>
+        <input nz-input type="text" id="witnessName" formControlName="name">
+      </div>
+      <div class="form-group">
+        <label for="witnessFatherName">Father's/Husband's
+          Name:</label>
+        <input nz-input type="text" id="witnessFatherName"
+          formControlName="father_name">
+      </div>
+      <div class="form-group">
+        <label for="witnessAge">Age:</label>
+        <input nz-input type="text" id="witnessAge" formControlName="age">
+      </div>
+      <div class="form-group">
+        <label for="witnessAge">Occupation:</label>
+        <input nz-input type="text" id="witnessAge"
+          formControlName="occupation">
+      </div>
+
+      <div class="form-group">
+        <label for="witnessesAddress">Permanent Address:</label>
+        <textarea nz-input id="witnessesAddress" formControlName="address"
+          rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="submit-button-container" style="width: 100%;">
+      <button style="width: 100%;" nz-button nzType="primary" type="submit" id="submitButton"
+        [disabled]="!isFormValid()"
+        (click)="prepraeData()"
+        class="submit-button" disabled>Submit</button>
+    </div>
+  </form>
+</div>
