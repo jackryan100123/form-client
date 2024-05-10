@@ -17,6 +17,14 @@ export class FormSearchNSeizureComponent implements OnInit {
 
   fir_id = '';
 
+  readonly_state = {
+    district: true,
+    ps: true,
+    year: true,
+    fir_gd: true,
+    date: true,
+  };
+
   constructor(
     private _formBuilder: FormBuilder,
     private _httpService: HttpService,
@@ -30,45 +38,59 @@ export class FormSearchNSeizureComponent implements OnInit {
     this.fir_id = this._activatedRouter.snapshot.params['fir_id'];
 
     this._httpService.getFIRData(this.fir_id).subscribe({
-      next: (res: any) => {
-        this.form.patchValue({
-          meta: {
-            district: 'Chandigarh',
-            ps: res.case.police_station,
-            year: format(new Date(res.case.date), 'yyyy'),
-            fir_gd: res.case.FIRno,
-            date: format(new Date(res.case.date), 'dd/MM/yyyy')
-          },
-    
-          property_siezed: {
-            property_seized: 'Property Seized 1',
-            property_seized_date: 'Property Seized Date 1',
-            property_seized_time: 'Property Seized Time 1',
-            property_seized_place: 'Property Seized Place 1',
-            desc_of_place: 'Desc of Place 1',
-          },
-    
-          person_from_whom_recovered: {
-            name: 'Name 1',
-            father_name: 'Father Name 1',
-            age: 'Age1',
-            sex: 'Male',
-            occupation: 'Occupation 1',
-          },
-    
-          witness: {
-            name: 'Witness Name 1',
-            father_name: 'Witness Father Name 1',
-            age: 'Witness Age 1',
-            occupation: 'Witness Occupation 1',
-            address: 'Witness Address 1',
-          },
-        });
-      },
+      next: (res: any) => {},
       error: (err) => {
-        console.log(err);
+        this.readonly_state = {
+          district: false,
+          ps: false,
+          year: false,
+          fir_gd: false,
+          date: false,
+        };
       },
-    })
+    });
+
+    this.form.patchValue({
+      meta: {
+        district: 'District 1',
+        ps: 'PS 1',
+        year: 'Year 1',
+        fir_gd: 'FIR/GD 1',
+        date: format(new Date(), 'yyyy-MM-dd'),
+      },
+
+      property_siezed: {
+        property_seized: 'Property Seized 1',
+        property_seized_date: 'Property Seized Date 1',
+        property_seized_time: 'Property Seized Time 1',
+        property_seized_place: 'Property Seized Place 1',
+        desc_of_place: 'Desc of Place 1',
+      },
+
+      person_from_whom_recovered: {
+        name: 'Name 1',
+        father_name: 'Father Name 1',
+        age: 'Age1',
+        sex: 'Male',
+        occupation: 'Occupation 1',
+      },
+
+      witness: {
+        name: 'Witness Name 1',
+        father_name: 'Witness Father Name 1',
+        age: 'Witness Age 1',
+        occupation: 'Witness Occupation 1',
+        address: 'Witness Address 1',
+      },
+
+      other_witness: {
+        name: 'Other Witness Name 1',
+        father_name: 'Other Witness Father Name 1',
+        age: 'Other Witness Age 1',
+        occupation: 'Other Witness Occupation 1',
+        address: 'Other Witness Address 1',
+      },
+    });
 
     //  add dummy data
     this.$table = [
@@ -170,6 +192,14 @@ export class FormSearchNSeizureComponent implements OnInit {
         occupation: ['', [Validators.required]],
         address: ['', [Validators.required]],
       }),
+
+      other_witness: this._formBuilder.group({
+        name: ['', [Validators.required]],
+        father_name: ['', [Validators.required]],
+        age: ['', [Validators.required]],
+        occupation: ['', [Validators.required]],
+        address: ['', [Validators.required]],
+      }),
     });
   }
 
@@ -234,6 +264,9 @@ export class FormSearchNSeizureComponent implements OnInit {
       table: this.$table,
       nature_of_property: this.$nature_of_property,
       details_of_property: this.$details_of_property,
+      other_witness: this.form.value.other_witness,
+      professional_reciver_of_property:
+        this.form.value.professional_reciver_of_property,
     };
 
     // data to pdf using jsPDF and create table in pdf using jspdf-autotable
@@ -266,10 +299,15 @@ export class FormSearchNSeizureComponent implements OnInit {
         body: data.table.map((table) => [table.acts, table.section]),
       });
 
-      doc.text('Property Seized', 14, 64);
+      doc.text(
+        'Property Seized',
+        14,
+        // dynamic y position
+        40 + data.table.length * 10 + 10
+      );
 
       autoTable(doc, {
-        startY: 68,
+        startY: 40 + data.table.length * 10 + 14,
         head: [
           [
             'Property Seized',
@@ -293,14 +331,11 @@ export class FormSearchNSeizureComponent implements OnInit {
       doc.text(
         'Person From Whom Recovered',
         14,
-        // dynamic height
-        68 + data.property_siezed.desc_of_place.split('\n').length * 10 + 10
+        40 + data.table.length * 10 + 14 + 20
       );
 
       autoTable(doc, {
-        // dynamic height
-        startY:
-          72 + data.property_siezed.desc_of_place.split('\n').length * 10 + 10,
+        startY: 40 + data.table.length * 10 + 14 + 24,
         head: [['Name', 'Father Name', 'Age', 'Sex', 'Occupation']],
         body: [
           [
@@ -313,11 +348,14 @@ export class FormSearchNSeizureComponent implements OnInit {
         ],
       });
 
-      doc.text('Nature of Property', 14, 108);
+      doc.text(
+        'Nature of Property Seized',
+        14,
+        40 + data.table.length * 10 + 14 + 20 + 20
+      );
 
       autoTable(doc, {
-        // dynamic height
-        startY: 112,
+        startY: 40 + data.table.length * 10 + 14 + 20 + 24,
         head: [['Nature', 'Category', 'Type', 'Description']],
         body: data.nature_of_property.map((nature) => [
           nature.nature,
@@ -328,14 +366,27 @@ export class FormSearchNSeizureComponent implements OnInit {
       });
 
       doc.text(
-        'Details of Property',
+        'Professional receiver of stolen property:' +
+          data.professional_reciver_of_property,
         14,
-        // dynamic height
-        112 + data.nature_of_property.length * 10 + 10
+        40 + data.table.length * 10 + 14 + 20 + 20 + 20 +
+          data.nature_of_property.length * 10 +
+          10
+      );
+
+      doc.text(
+        'Details of Property Seized',
+        14,
+        40 + data.table.length * 10 + 14 + 20 + 20 + 20 + 20 + 
+          data.nature_of_property.length * 10 +
+          20
       );
 
       autoTable(doc, {
-        startY: 116 + data.nature_of_property.length * 10 + 10,
+        startY: 40 + data.table.length * 10 + 14 + 20 + 20 + 20 + 24 + 
+          data.nature_of_property.length * 10 +
+          14
+        ,
         head: [['Category', 'Belongs To', 'Value']],
         body: data.details_of_property.map((detail) => [
           detail.category,
@@ -345,24 +396,26 @@ export class FormSearchNSeizureComponent implements OnInit {
       });
 
       doc.text(
-        'Witness',
+        'Witness Details',
         14,
-        // dynamic height
-        116 +
-          data.nature_of_property.length * 10 +
-          10 +
-          data.details_of_property.length * 10 +
-          10
+        40 + data.table.length * 10 + 14 + 20 + 20 + 20 + 20 + 20 +
+        data.nature_of_property.length * 10 +
+        20 + 20
       );
 
       autoTable(doc, {
-        startY:
-          120 +
-          data.nature_of_property.length * 10 +
-          10 +
+        startY: 40 + data.table.length * 10 + 14 + 20 + 20 + 20 + 20 + 20 +
           data.details_of_property.length * 10 +
-          10,
-        head: [['Name', 'Father Name', 'Age', 'Occupation', 'Address']],
+          14,
+        head: [
+          [
+            'Name',
+            'Father Name',
+            'Age',
+            'Occupation',
+            'Address',
+          ],
+        ],
         body: [
           [
             data.witness.name,
@@ -371,11 +424,16 @@ export class FormSearchNSeizureComponent implements OnInit {
             data.witness.occupation,
             data.witness.address,
           ],
+          [
+            data.other_witness.name,
+            data.other_witness.father_name,
+            data.other_witness.age,
+            data.other_witness.occupation,
+            data.other_witness.address,
+          ],
         ],
       });
-
-      // doc as pdf blob
-      // var pdf = doc.save('form-search-n-seizure.pdf');
+      
 
       var pdfAttachment = new File([doc.output('blob')], 'doc', {
         type: doc.output('blob').type,
@@ -385,15 +443,7 @@ export class FormSearchNSeizureComponent implements OnInit {
 
       formData.append('pdf', pdfAttachment);
 
-      this._httpService.postFIRPDF(formData, this.fir_id).subscribe({
-        next: (res) => {
-          // download pdf
-          doc.save(`search-n-seizure-${this.fir_id}.pdf`);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+      doc.save(`search-n-seizure-${this.fir_id}.pdf`);
     } catch (error) {
       console.log(error);
     }

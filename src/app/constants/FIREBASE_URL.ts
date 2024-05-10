@@ -1,0 +1,1 @@
+export const FIREBASE_URL = 'https://console.firebase.google.com/project/newlaws-f806b/database/newlaws-f806b-default-rtdb/data/~2F';

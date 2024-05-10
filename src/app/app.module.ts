@@ -14,6 +14,11 @@ import { ANT_MODULE_IMPORTS } from './ant.imports';
 import { FormSceneOfCrimeComponent } from './views/form-scene-of-crime/form-scene-of-crime.component';
 import { FormSearchNSeizureComponent } from './views/form-search-n-seizure/form-search-n-seizure.component';
 import { FormWitnessStatementComponent } from './views/form-witness-statement/form-witness-statement.component';
+
+import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { environment } from 'src/envs/environment';
+
 registerLocaleData(en);
 
 @NgModule({
@@ -32,6 +37,8 @@ registerLocaleData(en);
     ANT_MODULE_IMPORTS,
     ReactiveFormsModule,
     HttpClientModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => getFirestore()),
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US },

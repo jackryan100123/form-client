@@ -17,6 +17,14 @@ export class FormSceneOfCrimeComponent implements OnInit {
 
   fir_id = '';
 
+  readonly_state = {
+    district: true,
+    ps: true,
+    year: true,
+    fir_gd: true,
+    date: true,
+  }
+
   constructor(
     private _formBuilder: FormBuilder,
     private _httpService: HttpService,
@@ -66,7 +74,13 @@ export class FormSceneOfCrimeComponent implements OnInit {
         });
       },
       error: (err) => {
-        console.log(err);
+        this.readonly_state = {
+          district: false,
+          ps: false,
+          year: false,
+          fir_gd: false,
+          date: false,
+        };
       },
     })
 
@@ -81,34 +95,6 @@ export class FormSceneOfCrimeComponent implements OnInit {
         section: 'Section 2',
       },
     ];
-
-    this.$nature_of_property = [
-      {
-        nature: 'Nature 1',
-        category: 'Category 1',
-        type: 'Type 1',
-        description: 'Description 1',
-      },
-      {
-        nature: 'Nature 2',
-        category: 'Category 2',
-        type: 'Type 2',
-        description: 'Description 2',
-      },
-    ];
-
-    this.$details_of_property = [
-      {
-        category: 'Category 1',
-        belongs_to: 'Belongs To 1',
-        value: 'Value 1',
-      },
-      {
-        category: 'Category 2',
-        belongs_to: 'Belongs To 2',
-        value: 'Value 2',
-      },
-    ];
   }
 
   $table = [
@@ -118,22 +104,12 @@ export class FormSceneOfCrimeComponent implements OnInit {
     },
   ];
 
-  $nature_of_property = [
+  $exhibits_lifted = [
     {
-      nature: '',
-      category: '',
-      type: '',
-      description: '',
+      exhibit: '',
+      remarks: '',
     },
-  ];
-
-  $details_of_property = [
-    {
-      category: '',
-      belongs_to: '',
-      value: '',
-    },
-  ];
+  ]
 
   initForm() {
     return this._formBuilder.group({
@@ -145,25 +121,17 @@ export class FormSceneOfCrimeComponent implements OnInit {
         date: ['', [Validators.required]],
       }),
 
-      property_siezed: this._formBuilder.group({
-        property_seized: ['', [Validators.required]],
-        property_seized_date: ['', [Validators.required]],
-        property_seized_time: ['', [Validators.required]],
-        property_seized_place: ['', [Validators.required]],
-        desc_of_place: ['', [Validators.required]],
-      }),
+      descroption_scene_crime: ['', [Validators.required]],
 
-      person_from_whom_recovered: this._formBuilder.group({
+      witness: this._formBuilder.group({
         name: ['', [Validators.required]],
         father_name: ['', [Validators.required]],
         age: ['', [Validators.required]],
-        sex: ['', [Validators.required]],
         occupation: ['', [Validators.required]],
+        address: ['', [Validators.required]],
       }),
 
-      professional_reciver_of_property: ['yes', [Validators.required]],
-
-      witness: this._formBuilder.group({
+     other_witness: this._formBuilder.group({
         name: ['', [Validators.required]],
         father_name: ['', [Validators.required]],
         age: ['', [Validators.required]],
@@ -200,40 +168,28 @@ export class FormSceneOfCrimeComponent implements OnInit {
     this.$table.splice(index, 1);
   }
 
-  addNatureOfProperty() {
-    this.$nature_of_property.push({
-      nature: '',
-      category: '',
-      type: '',
-      description: '',
+  addExhibitsLifted() {
+    this.$exhibits_lifted.push({
+      exhibit: '',
+      remarks: '',
     });
   }
 
-  removeNatureOfProperty(index: number) {
-    this.$nature_of_property.splice(index, 1);
-  }
-
-  addDetailsOfProperty() {
-    this.$details_of_property.push({
-      category: '',
-      belongs_to: '',
-      value: '',
-    });
-  }
-
-  removeDetailsOfProperty(index: number) {
-    this.$details_of_property.splice(index, 1);
+  removeExhibitsLifted(index: number) {
+    this.$exhibits_lifted.splice(index, 1);
   }
 
   prepraeData() {
     var data = {
       meta: this.meta.value,
-      property_siezed: this.property_siezed.value,
-      person_from_whom_recovered: this.person_from_whom_recovered.value,
-      witness: this.witness.value,
       table: this.$table,
-      nature_of_property: this.$nature_of_property,
-      details_of_property: this.$details_of_property,
+      
+      descroption_scene_crime: this.form.value.descroption_scene_crime,
+
+      exhibits_lifted: this.$exhibits_lifted,
+
+      witness: this.witness.value,
+      other_witness: this.form.value.other_witness,
     };
 
     // data to pdf using jsPDF and create table in pdf using jspdf-autotable
@@ -266,102 +222,26 @@ export class FormSceneOfCrimeComponent implements OnInit {
         body: data.table.map((table) => [table.acts, table.section]),
       });
 
-      doc.text('Property Seized', 14, 64);
+      doc.text('Description of Scene of Crime', 14, 64);
+
+      doc.text(data.descroption_scene_crime, 14, 68);
+
+      doc.text('Exhibits Lifted', 14, 80);
 
       autoTable(doc, {
-        startY: 68,
-        head: [
-          [
-            'Property Seized',
-            'Property Seized Date',
-            'Property Seized Time',
-            'Property Seized Place',
-            'Desc of Place',
-          ],
-        ],
-        body: [
-          [
-            data.property_siezed.property_seized,
-            data.property_siezed.property_seized_date,
-            data.property_siezed.property_seized_time,
-            data.property_siezed.property_seized_place,
-            data.property_siezed.desc_of_place,
-          ],
-        ],
-      });
-
-      doc.text(
-        'Person From Whom Recovered',
-        14,
-        // dynamic height
-        68 + data.property_siezed.desc_of_place.split('\n').length * 10 + 10
-      );
-
-      autoTable(doc, {
-        // dynamic height
-        startY:
-          72 + data.property_siezed.desc_of_place.split('\n').length * 10 + 10,
-        head: [['Name', 'Father Name', 'Age', 'Sex', 'Occupation']],
-        body: [
-          [
-            data.person_from_whom_recovered.name,
-            data.person_from_whom_recovered.father_name,
-            data.person_from_whom_recovered.age,
-            data.person_from_whom_recovered.sex,
-            data.person_from_whom_recovered.occupation,
-          ],
-        ],
-      });
-
-      doc.text('Nature of Property', 14, 108);
-
-      autoTable(doc, {
-        // dynamic height
-        startY: 112,
-        head: [['Nature', 'Category', 'Type', 'Description']],
-        body: data.nature_of_property.map((nature) => [
-          nature.nature,
-          nature.category,
-          nature.type,
-          nature.description,
+        startY: 84,
+        head: [['Exhibit', 'Remarks']],
+        body: data.exhibits_lifted.map((exhibit) => [
+          exhibit.exhibit,
+          exhibit.remarks,
         ]),
       });
 
-      doc.text(
-        'Details of Property',
-        14,
-        // dynamic height
-        112 + data.nature_of_property.length * 10 + 10
-      );
+      doc.text('Witness', 14, 100);
 
       autoTable(doc, {
-        startY: 116 + data.nature_of_property.length * 10 + 10,
-        head: [['Category', 'Belongs To', 'Value']],
-        body: data.details_of_property.map((detail) => [
-          detail.category,
-          detail.belongs_to,
-          detail.value,
-        ]),
-      });
-
-      doc.text(
-        'Witness',
-        14,
         // dynamic height
-        116 +
-          data.nature_of_property.length * 10 +
-          10 +
-          data.details_of_property.length * 10 +
-          10
-      );
-
-      autoTable(doc, {
-        startY:
-          120 +
-          data.nature_of_property.length * 10 +
-          10 +
-          data.details_of_property.length * 10 +
-          10,
+        startY: 104 + (data.exhibits_lifted.length + 1) * 10 + 10,
         head: [['Name', 'Father Name', 'Age', 'Occupation', 'Address']],
         body: [
           [
@@ -374,8 +254,22 @@ export class FormSceneOfCrimeComponent implements OnInit {
         ],
       });
 
-      // doc as pdf blob
-      // var pdf = doc.save('form-search-n-seizure.pdf');
+      doc.text('Other Witness', 14, 140);
+
+      autoTable(doc, {
+        // dynamic height
+        startY: 144 + (data.exhibits_lifted.length + 1) * 10 + 10,
+        head: [['Name', 'Father Name', 'Age', 'Occupation', 'Address']],
+        body: [
+          [
+            data.other_witness.name,
+            data.other_witness.father_name,
+            data.other_witness.age,
+            data.other_witness.occupation,
+            data.other_witness.address,
+          ],
+        ],
+      });
 
       var pdfAttachment = new File([doc.output('blob')], 'doc', {
         type: doc.output('blob').type,
@@ -385,10 +279,11 @@ export class FormSceneOfCrimeComponent implements OnInit {
 
       formData.append('pdf', pdfAttachment);
 
+      doc.save(`search-n-seizure-${this.fir_id}.pdf`);
+
       this._httpService.postFIRPDF(formData, this.fir_id).subscribe({
         next: (res) => {
           // download pdf
-          doc.save(`search-n-seizure-${this.fir_id}.pdf`);
         },
         error: (err) => {
           console.log(err);
@@ -403,16 +298,9 @@ export class FormSceneOfCrimeComponent implements OnInit {
     return this.$table.every((table) => table.acts && table.section);
   }
 
-  areAllNatureOfPropertyFilled() {
-    return this.$nature_of_property.every(
-      (nature) =>
-        nature.nature && nature.category && nature.type && nature.description
-    );
-  }
-
-  areAllDetailsOfPropertyFilled() {
-    return this.$details_of_property.every(
-      (detail) => detail.category && detail.belongs_to && detail.value
+  areAllExhibitsLiftedFilled() {
+    return this.$exhibits_lifted.every(
+      (exhibit) => exhibit.exhibit && exhibit.remarks
     );
   }
 
@@ -420,8 +308,7 @@ export class FormSceneOfCrimeComponent implements OnInit {
     return (
       this.form.valid &&
       this.areAllTablesFilled() &&
-      this.areAllNatureOfPropertyFilled() &&
-      this.areAllDetailsOfPropertyFilled()
+      this.areAllExhibitsLiftedFilled()
     );
   }
 }
