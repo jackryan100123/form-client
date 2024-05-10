@@ -7,23 +7,27 @@
     <div formGroupName="meta">
       <div class="form-group">
         <label for="district">District:</label>
-        <input nz-input type="text" id="district" formControlName="district" readonly>
+        <input nz-input type="text" id="district" formControlName="district" [readonly]="readonly_state.district">
       </div>
       <div class="form-group">
         <label for="ps">PS:</label>
-        <input nz-input type="text" id="ps" formControlName="ps" readonly>
+        <input nz-input type="text" id="ps" formControlName="ps" [readonly]="readonly_state.ps">
       </div>
       <div class="form-group">
         <label for="year">Year:</label>
-        <input nz-input type="text" id="year" formControlName="year" readonly>
+        <input nz-input type="text" id="year" formControlName="year" [readonly]="readonly_state.year">
       </div>
       <div class="form-group">
         <label for="fir">FIR/GD No.:</label>
-        <input nz-input type="text" id="fir" formControlName="fir_gd" readonly>
+        <input nz-input type="text" id="fir" formControlName="fir_gd" [readonly]="readonly_state.fir_gd">
       </div>
-      <div class="form-group">
+      <div class="form-group" *ngIf="readonly_state.date">
         <label for="date">Date:</label>
-        <input nz-input type="text" id="fir" formControlName="date" readonly>
+        <input nz-input type="text" id="fir" formControlName="date" [readonly]="readonly_state.date">
+      </div>
+      <div class="form-group" *ngIf="!readonly_state.date">
+        <label for="date">Date:</label>
+        <nz-date-picker formControlName="date" [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
       </div>
     </div>
 
@@ -229,7 +233,36 @@
     </div>
 
     <div class="scroll" formGroupName="witness">
-      <h6 nz-typography>Witnesses:</h6>
+      <h6 nz-typography>Witnesses 01:</h6>
+      <div class="form-group">
+        <label for="witnessName">Name:</label>
+        <input nz-input type="text" id="witnessName" formControlName="name">
+      </div>
+      <div class="form-group">
+        <label for="witnessFatherName">Father's/Husband's
+          Name:</label>
+        <input nz-input type="text" id="witnessFatherName"
+          formControlName="father_name">
+      </div>
+      <div class="form-group">
+        <label for="witnessAge">Age:</label>
+        <input nz-input type="text" id="witnessAge" formControlName="age">
+      </div>
+      <div class="form-group">
+        <label for="witnessAge">Occupation:</label>
+        <input nz-input type="text" id="witnessAge"
+          formControlName="occupation">
+      </div>
+
+      <div class="form-group">
+        <label for="witnessesAddress">Permanent Address:</label>
+        <textarea nz-input id="witnessesAddress" formControlName="address"
+          rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="scroll" formGroupName="other_witness">
+      <h6 nz-typography>Witnesses 02:</h6>
       <div class="form-group">
         <label for="witnessName">Name:</label>
         <input nz-input type="text" id="witnessName" formControlName="name">

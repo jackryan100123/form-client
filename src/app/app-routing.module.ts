@@ -11,7 +11,7 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'scene-of-crime', 
+    path: 'scene-of-crime/:fir_id', 
     component: FormSceneOfCrimeComponent,
     title: "Scene of Crime Form",
   },
@@ -21,7 +21,7 @@ const routes: Routes = [
     title: "Search and Seizure Form",
   },
   {
-    path: 'witness-statement',
+    path: 'witness-statement/:fir_id',
     component: FormWitnessStatementComponent,
     title: "Witness Statement Form",
   }

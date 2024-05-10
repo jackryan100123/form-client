@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { format } from 'date-fns';
@@ -6,6 +6,9 @@ import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { HttpService } from 'src/app/core/services/http.service';
+
+import { Firestore, collectionData, collection } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'abet-form-witness-statement',
@@ -15,123 +18,50 @@ import { HttpService } from 'src/app/core/services/http.service';
 export class FormWitnessStatementComponent implements OnInit {
   form!: FormGroup;
 
-  fir_id = '';
+  user_id = '';
+
+  readonly_state = {
+    district: true,
+    ps: true,
+    year: true,
+    fir_gd: true,
+    date: true,
+  }
+
+  firestore: Firestore = inject(Firestore);
 
   constructor(
     private _formBuilder: FormBuilder,
     private _httpService: HttpService,
-    private _activatedRouter: ActivatedRoute
+    private _activatedRouter: ActivatedRoute,
   ) {
     this.form = this.initForm();
   }
 
   ngOnInit(): void {
-    // get fir_id from route
-    this.fir_id = this._activatedRouter.snapshot.params['fir_id'];
+    // get user_id from route
+    this.user_id = this._activatedRouter.snapshot.params['user_id'];
 
-    this._httpService.getFIRData(this.fir_id).subscribe({
+    this._httpService.getFIRData(this.user_id).subscribe({
       next: (res: any) => {
-        this.form.patchValue({
-          meta: {
-            district: 'Chandigarh',
-            ps: res.case.police_station,
-            year: format(new Date(res.case.date), 'yyyy'),
-            fir_gd: res.case.FIRno,
-            date: format(new Date(res.case.date), 'dd/MM/yyyy')
-          },
-    
-          property_siezed: {
-            property_seized: 'Property Seized 1',
-            property_seized_date: 'Property Seized Date 1',
-            property_seized_time: 'Property Seized Time 1',
-            property_seized_place: 'Property Seized Place 1',
-            desc_of_place: 'Desc of Place 1',
-          },
-    
-          person_from_whom_recovered: {
-            name: 'Name 1',
-            father_name: 'Father Name 1',
-            age: 'Age1',
-            sex: 'Male',
-            occupation: 'Occupation 1',
-          },
-    
-          witness: {
-            name: 'Witness Name 1',
-            father_name: 'Witness Father Name 1',
-            age: 'Witness Age 1',
-            occupation: 'Witness Occupation 1',
-            address: 'Witness Address 1',
-          },
-        });
+       
       },
       error: (err) => {
-        console.log(err);
+        this.readonly_state = {
+          district: false,
+          ps: false,
+          year: false,
+          fir_gd: false,
+          date: false,
+        }
       },
     })
-
-    //  add dummy data
-    this.$table = [
-      {
-        acts: 'Act 1',
-        section: 'Section 1',
-      },
-      {
-        acts: 'Act 2',
-        section: 'Section 2',
-      },
-    ];
-
-    this.$nature_of_property = [
-      {
-        nature: 'Nature 1',
-        category: 'Category 1',
-        type: 'Type 1',
-        description: 'Description 1',
-      },
-      {
-        nature: 'Nature 2',
-        category: 'Category 2',
-        type: 'Type 2',
-        description: 'Description 2',
-      },
-    ];
-
-    this.$details_of_property = [
-      {
-        category: 'Category 1',
-        belongs_to: 'Belongs To 1',
-        value: 'Value 1',
-      },
-      {
-        category: 'Category 2',
-        belongs_to: 'Belongs To 2',
-        value: 'Value 2',
-      },
-    ];
   }
 
   $table = [
     {
       acts: '',
       section: '',
-    },
-  ];
-
-  $nature_of_property = [
-    {
-      nature: '',
-      category: '',
-      type: '',
-      description: '',
-    },
-  ];
-
-  $details_of_property = [
-    {
-      category: '',
-      belongs_to: '',
-      value: '',
     },
   ];
 
@@ -145,44 +75,20 @@ export class FormWitnessStatementComponent implements OnInit {
         date: ['', [Validators.required]],
       }),
 
-      property_siezed: this._formBuilder.group({
-        property_seized: ['', [Validators.required]],
-        property_seized_date: ['', [Validators.required]],
-        property_seized_time: ['', [Validators.required]],
-        property_seized_place: ['', [Validators.required]],
-        desc_of_place: ['', [Validators.required]],
-      }),
-
-      person_from_whom_recovered: this._formBuilder.group({
-        name: ['', [Validators.required]],
-        father_name: ['', [Validators.required]],
-        age: ['', [Validators.required]],
-        sex: ['', [Validators.required]],
-        occupation: ['', [Validators.required]],
-      }),
-
-      professional_reciver_of_property: ['yes', [Validators.required]],
-
       witness: this._formBuilder.group({
         name: ['', [Validators.required]],
         father_name: ['', [Validators.required]],
         age: ['', [Validators.required]],
         occupation: ['', [Validators.required]],
         address: ['', [Validators.required]],
+        statement: ['', [Validators.required]],
+        is_agree: [false, [Validators.required]],
       }),
     });
   }
 
   get meta() {
     return this.form.get('meta') as FormGroup;
-  }
-
-  get property_siezed() {
-    return this.form.get('property_siezed') as FormGroup;
-  }
-
-  get person_from_whom_recovered() {
-    return this.form.get('person_from_whom_recovered') as FormGroup;
   }
 
   get witness() {
@@ -200,40 +106,11 @@ export class FormWitnessStatementComponent implements OnInit {
     this.$table.splice(index, 1);
   }
 
-  addNatureOfProperty() {
-    this.$nature_of_property.push({
-      nature: '',
-      category: '',
-      type: '',
-      description: '',
-    });
-  }
-
-  removeNatureOfProperty(index: number) {
-    this.$nature_of_property.splice(index, 1);
-  }
-
-  addDetailsOfProperty() {
-    this.$details_of_property.push({
-      category: '',
-      belongs_to: '',
-      value: '',
-    });
-  }
-
-  removeDetailsOfProperty(index: number) {
-    this.$details_of_property.splice(index, 1);
-  }
-
   prepraeData() {
     var data = {
       meta: this.meta.value,
-      property_siezed: this.property_siezed.value,
-      person_from_whom_recovered: this.person_from_whom_recovered.value,
       witness: this.witness.value,
       table: this.$table,
-      nature_of_property: this.$nature_of_property,
-      details_of_property: this.$details_of_property,
     };
 
     // data to pdf using jsPDF and create table in pdf using jspdf-autotable
@@ -266,103 +143,24 @@ export class FormWitnessStatementComponent implements OnInit {
         body: data.table.map((table) => [table.acts, table.section]),
       });
 
-      doc.text('Property Seized', 14, 64);
+      doc.text('Witness Details', 14, 
+        // calculate height based on table length
+        40 + (data.table.length * 10) + 10
+      );
 
       autoTable(doc, {
-        startY: 68,
+        startY: 40 + (data.table.length * 10) + 14,
         head: [
           [
-            'Property Seized',
-            'Property Seized Date',
-            'Property Seized Time',
-            'Property Seized Place',
-            'Desc of Place',
+            'Name',
+            'Father Name',
+            'Age',
+            'Occupation',
+            'Address',
+            'Statement',
+            'Is Agree',
           ],
         ],
-        body: [
-          [
-            data.property_siezed.property_seized,
-            data.property_siezed.property_seized_date,
-            data.property_siezed.property_seized_time,
-            data.property_siezed.property_seized_place,
-            data.property_siezed.desc_of_place,
-          ],
-        ],
-      });
-
-      doc.text(
-        'Person From Whom Recovered',
-        14,
-        // dynamic height
-        68 + data.property_siezed.desc_of_place.split('\n').length * 10 + 10
-      );
-
-      autoTable(doc, {
-        // dynamic height
-        startY:
-          72 + data.property_siezed.desc_of_place.split('\n').length * 10 + 10,
-        head: [['Name', 'Father Name', 'Age', 'Sex', 'Occupation']],
-        body: [
-          [
-            data.person_from_whom_recovered.name,
-            data.person_from_whom_recovered.father_name,
-            data.person_from_whom_recovered.age,
-            data.person_from_whom_recovered.sex,
-            data.person_from_whom_recovered.occupation,
-          ],
-        ],
-      });
-
-      doc.text('Nature of Property', 14, 108);
-
-      autoTable(doc, {
-        // dynamic height
-        startY: 112,
-        head: [['Nature', 'Category', 'Type', 'Description']],
-        body: data.nature_of_property.map((nature) => [
-          nature.nature,
-          nature.category,
-          nature.type,
-          nature.description,
-        ]),
-      });
-
-      doc.text(
-        'Details of Property',
-        14,
-        // dynamic height
-        112 + data.nature_of_property.length * 10 + 10
-      );
-
-      autoTable(doc, {
-        startY: 116 + data.nature_of_property.length * 10 + 10,
-        head: [['Category', 'Belongs To', 'Value']],
-        body: data.details_of_property.map((detail) => [
-          detail.category,
-          detail.belongs_to,
-          detail.value,
-        ]),
-      });
-
-      doc.text(
-        'Witness',
-        14,
-        // dynamic height
-        116 +
-          data.nature_of_property.length * 10 +
-          10 +
-          data.details_of_property.length * 10 +
-          10
-      );
-
-      autoTable(doc, {
-        startY:
-          120 +
-          data.nature_of_property.length * 10 +
-          10 +
-          data.details_of_property.length * 10 +
-          10,
-        head: [['Name', 'Father Name', 'Age', 'Occupation', 'Address']],
         body: [
           [
             data.witness.name,
@@ -370,9 +168,13 @@ export class FormWitnessStatementComponent implements OnInit {
             data.witness.age,
             data.witness.occupation,
             data.witness.address,
+            data.witness.statement,
+            data.witness.is_agree ? 'Yes' : 'No',
           ],
         ],
       });
+
+      doc.save(`search-n-seizure-${this.user_id}.pdf`);
 
       // doc as pdf blob
       // var pdf = doc.save('form-search-n-seizure.pdf');
@@ -385,10 +187,9 @@ export class FormWitnessStatementComponent implements OnInit {
 
       formData.append('pdf', pdfAttachment);
 
-      this._httpService.postFIRPDF(formData, this.fir_id).subscribe({
+      this._httpService.postFIRPDF(formData, this.user_id).subscribe({
         next: (res) => {
           // download pdf
-          doc.save(`search-n-seizure-${this.fir_id}.pdf`);
         },
         error: (err) => {
           console.log(err);
@@ -403,25 +204,11 @@ export class FormWitnessStatementComponent implements OnInit {
     return this.$table.every((table) => table.acts && table.section);
   }
 
-  areAllNatureOfPropertyFilled() {
-    return this.$nature_of_property.every(
-      (nature) =>
-        nature.nature && nature.category && nature.type && nature.description
-    );
-  }
-
-  areAllDetailsOfPropertyFilled() {
-    return this.$details_of_property.every(
-      (detail) => detail.category && detail.belongs_to && detail.value
-    );
-  }
-
   isFormValid() {
     return (
       this.form.valid &&
       this.areAllTablesFilled() &&
-      this.areAllNatureOfPropertyFilled() &&
-      this.areAllDetailsOfPropertyFilled()
+      this.witness.get('is_agree')?.value
     );
   }
 }
